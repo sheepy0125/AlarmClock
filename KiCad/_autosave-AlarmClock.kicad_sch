@@ -2256,7 +2256,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid d6269b8d-d7cb-4e4f-8c5a-e00848279b2b)
   )
-  (text "Delimiters & Buttons" (at 115.57 220.98 0)
+  (text "Delimiters & Buttons" (at 113.665 220.98 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid d86cbb32-1dbb-454c-b8b0-f3606dd1bae0)
   )
