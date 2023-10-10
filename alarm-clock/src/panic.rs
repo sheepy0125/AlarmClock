@@ -7,6 +7,8 @@ use ufmt::uwriteln;
 
 #[panic_handler]
 pub fn panic(info: &PanicInfo) -> ! {
+    delay_ms(1_000_u16);
+
     let peripherals = unsafe { arduino_hal::Peripherals::steal() };
     let pins = arduino_hal::pins!(peripherals);
     let serial: &mut UsbSerial = &mut default_serial!(peripherals, pins, BAUD_RATE);

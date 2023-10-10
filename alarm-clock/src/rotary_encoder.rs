@@ -4,6 +4,7 @@
 //! state is set.
 
 use crate::{
+    console::{debug, println},
     interrupts::{changed_state, get_rotary_encoder_state, RotaryEncoderState},
     pins::{self, RotaryEncoderPins},
     shared::{
@@ -56,13 +57,20 @@ impl RotaryEncoder {
         )
     }
 
-    pub fn update<'cs>(&mut self, critical_section: &CriticalSection<'cs>) {
-        let state = get_rotary_encoder_state(critical_section);
+    pub fn update(&mut self) {
+        let state = get_rotary_encoder_state();
         // Only detect rotary encoder changes, ignore snooze press
-        self.changed = changed_state(critical_section)
+        self.changed = changed_state()
             && (self.state.a != state.a
                 || self.state.b != state.b
                 || self.state.button != state.button);
+        debug!(
+            "[DEBUG] [ROT ENC] Rotary encoder update, changed: {}",
+            match self.changed {
+                true => "YES",
+                false => "NO",
+            }
+        );
         self.state = state;
     }
 

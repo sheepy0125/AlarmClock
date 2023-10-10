@@ -11,7 +11,7 @@ use core::{
     sync::atomic::{AtomicBool, Ordering::SeqCst},
 };
 
-use crate::{pins, shared::PinState::PinState};
+use crate::{pins, shared::PinState::PinState, time_display::HOUR_MINUTE_DISPLAY};
 
 pub use millis::{millis, millis_init};
 pub use rotary_encoder_and_snooze::{
@@ -24,9 +24,9 @@ pub use rotary_encoder_and_snooze::{
 mod millis {
     use super::*;
 
-    const PRESCALER: u32 = 1_024_u32;
-    const TIMER_COUNTS: u32 = 125_u32;
-    const MILLIS_INCREMENT: u32 = PRESCALER * TIMER_COUNTS / 16_000_u32; // Uno runs at 16MHz
+    const PRESCALER: u32 = 64_u32;
+    const TIMER_COUNTS: u32 = 250_u32;
+    const MILLIS_INCREMENT: u32 = PRESCALER * TIMER_COUNTS / 16_000_u32; // 16MHz
 
     static MILLIS_COUNTER: Mutex<Cell<u32>> = Mutex::new(Cell::new(0_u32));
 
@@ -57,6 +57,18 @@ mod millis {
             let counter_cell = MILLIS_COUNTER.borrow(critical_section);
             let counter = counter_cell.get();
             counter_cell.set(counter + MILLIS_INCREMENT);
+
+            // Here, we can update the multiplexed display such that it has a digit
+            // displayed once every millisecond (as MILLIS_INCREMENT is/should be 1ms)
+            if let Some(mut vacant_borrow) = HOUR_MINUTE_DISPLAY
+                .borrow(critical_section)
+                .try_borrow_mut()
+                .ok()
+            {
+                if let Some(display) = vacant_borrow.as_mut() {
+                    display.display(critical_section);
+                }
+            }
         })
     }
 
@@ -67,8 +79,6 @@ mod millis {
 }
 
 mod rotary_encoder_and_snooze {
-    use avr_device::interrupt::CriticalSection;
-
     use super::*;
 
     /// Set true for every interrupt
@@ -148,9 +158,7 @@ mod rotary_encoder_and_snooze {
         pub button: PinState,
     }
 
-    pub fn get_rotary_encoder_state<'cs>(
-        _critical_section: &CriticalSection<'cs>,
-    ) -> RotaryEncoderState {
+    pub fn get_rotary_encoder_state() -> RotaryEncoderState {
         RotaryEncoderState {
             a: ROTARY_PIN_A.load(SeqCst),
             b: ROTARY_PIN_B.load(SeqCst),
@@ -158,11 +166,11 @@ mod rotary_encoder_and_snooze {
         }
     }
 
-    pub fn get_snooze_button_pressed<'cs>(_critical_section: &CriticalSection<'cs>) -> PinState {
+    pub fn get_snooze_button_pressed() -> PinState {
         SNOOZE_BUTTON.load(SeqCst)
     }
 
-    pub fn changed_state<'cs>(_critical_section: &CriticalSection<'cs>) -> bool {
+    pub fn changed_state() -> bool {
         // No compare and exchanges :(
         if CHANGED_STATE.load(SeqCst) {
             CHANGED_STATE.store(false, SeqCst);

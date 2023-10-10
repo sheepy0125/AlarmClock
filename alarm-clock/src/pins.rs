@@ -44,13 +44,19 @@ pub mod snooze {
 
 pub mod buzzer {
     use super::*;
-    pub type Buzzer = Pin<Output, port::PC5>;
+    pub type Buzzer = Pin<Output, port::PC3>;
 }
 
 pub mod leds {
     use super::*;
     pub type Alarm = Pin<Output, port::PC1>;
     pub type PM = Pin<Output, port::PC2>;
+}
+
+pub mod iic {
+    use super::*;
+    pub type SDA = Pin<Input<PullUp>, port::PC4>;
+    pub type SCL = Pin<Input<PullUp>, port::PC5>;
 }
 
 pub struct ShiftRegisterPins<SerialInput, Clock, Latch>
@@ -68,4 +74,9 @@ pub struct RotaryEncoderPins {
     pub a: rotary_encoder::A,
     pub b: rotary_encoder::B,
     pub button: rotary_encoder::Button,
+}
+
+pub struct IICPins {
+    pub sda: iic::SDA,
+    pub scl: iic::SCL,
 }

@@ -1,0 +1,13 @@
+POWER
+3.3v: red
+5v: yellow
+gnd: black
+
+I2C
+clock: yellow
+data: green
+
+SHIFT REGISTER
+serial in: blue
+clock: yellow
+latch: green

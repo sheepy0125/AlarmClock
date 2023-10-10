@@ -2,6 +2,7 @@
 //! the interrupt handler. See `interrupts.rs` for more!
 
 use crate::{
+    console::{debug, println},
     interrupts::{changed_state, get_snooze_button_pressed, RotaryEncoderState},
     pins::{self, RotaryEncoderPins},
     shared::{
@@ -34,10 +35,17 @@ impl SnoozeButton {
         }
     }
 
-    pub fn update<'cs>(&mut self, critical_section: &CriticalSection<'cs>) {
-        let state = get_snooze_button_pressed(critical_section);
+    pub fn update(&mut self) {
+        let state = get_snooze_button_pressed();
         // Only detect snooze button presses, ignore rotary encoder changes
-        self.changed = changed_state(critical_section) && (self.state != state);
+        self.changed = changed_state() && (self.state != state);
+        debug!(
+            "[DEBUG] [SNOOZE] Snooze button update, changed: {}",
+            match self.changed {
+                true => "YES",
+                false => "NO",
+            }
+        );
         self.state = state;
     }
 
