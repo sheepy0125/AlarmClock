@@ -1,16 +1,16 @@
 # Alarm Clock
 
-An Alarm Clock created as a school project in just under two weeks.
+An Alarm Clock created as a school project.
 
-## Hardware
+## Hardware (general)
 
-Uses a socketed Arduino Uno (`atmega328p`) as the processor to control:
-- 6x 7-segment displays for hours, minutes, and seconds
+Uses an Arduino Uno (`atmega328p`) as the processor to control:
+- 6x 7-segment digits for hours, minutes, and seconds
 - 1x character LCD
-- 1x snooze button
+- 1x snooze button (key switch)
 - 1x rotary encoder to adjust time and change other settings (as seen on the LCD)
-- 1x alarm buzzer
-- 1x alarm slider switch / toggle
+- 1x piezo buzzer
+- 1x real time clock
 
 ### Shift registers
 
@@ -18,18 +18,19 @@ Because the Uno only has ~19 available pins, I used serial-in parallel-out buffe
 
 ## Software
 
-All software is written in Rust. I'm not sure why -- considering the time crunch -- but so be it.
+All software is written in Rust with [Rahix's Arduino HAL crate](https://github.com/rahix/avr-hal).
 
 ## Design
 
-TODO!!! Probably when the write up comes lol.
+TODO!!!
 
 ## Progress
 
 - [x] Design schematic (done: 2023-09-17)
+- [x] Order parts
+- [ ] Breadboard / POC (in progress)
 - [ ] Design PCB
 - [ ] Order PCB parts
-- [ ] Code the software
-- [ ] Construct case
+- [ ] Finish software (in progress)
+- [x] Construct case
 - [ ] Integration
-- [ ] Write-up (due: 2023-09-29)
